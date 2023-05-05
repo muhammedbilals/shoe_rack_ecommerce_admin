@@ -8,12 +8,14 @@ class CustomButton extends StatelessWidget {
   final Color? buttonandtextcolor;
   final num? width;
   final Widget? widget;
+  final Future<void>? function;
 
   const CustomButton(
       {super.key,
       this.icon,
       this.width,
       this.widget,
+      this.function,
       required this.text,
       this.color,
       this.buttonandtextcolor});
@@ -31,13 +33,16 @@ class CustomButton extends StatelessWidget {
           height: 60,
           child: ElevatedButton.icon(
             style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll<Color>(
-                    color != null ? color! : colorgreen),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
+              backgroundColor: MaterialStatePropertyAll<Color>(
+                  color != null ? color! : colorgreen),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
-                ))),
+                ),
+              ),
+            ),
             onPressed: () {
+              function;
               widget != null
                   ? Navigator.push(
                       context,

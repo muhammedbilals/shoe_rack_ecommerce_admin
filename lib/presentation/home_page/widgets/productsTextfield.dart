@@ -7,12 +7,14 @@ class ProductsTextField extends StatelessWidget {
   ProductsTextField({
     super.key,
     required this.title,
+    required this.controller,
     this.isNumberPad,
     required this.maintitle,
   });
 
   final String title;
   final String? maintitle;
+  final TextEditingController? controller;
 
   bool? isNumberPad = false;
 
@@ -52,6 +54,7 @@ class ProductsTextField extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: TextFormField(
+                        controller: controller,
                         focusNode: FocusNode(canRequestFocus: true),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         // validator: validator,

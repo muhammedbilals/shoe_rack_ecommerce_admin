@@ -17,7 +17,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(
-                height: 250,
+                height: 200,
               ),
               const Center(
                 child: Text(
@@ -33,9 +33,9 @@ class LoginPage extends StatelessWidget {
               TextFieldSignUp(icon: Icons.email, title: 'Email'),
               sbox,
               TextFieldSignUp(
-                  icon: Icons.password,
-                  title: 'Password',
-                  ),
+                icon: Icons.password,
+                title: 'Password',
+              ),
               sbox,
               sbox,
               SignUpButton(
@@ -45,31 +45,6 @@ class LoginPage extends StatelessWidget {
                 // widget: MainPage(),
               ),
               sbox,
-              Center(
-                child: SizedBox(
-                  width: size.width * 0.9,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: size.width * 0.3,
-                          height: 1,
-                          color: colorgreen,
-                        ),
-                        const Text('or Continue with'),
-                        Container(
-                          width: size.width * 0.3,
-                          height: 1,
-                          color: colorgreen,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               sbox,
             ],
           ),

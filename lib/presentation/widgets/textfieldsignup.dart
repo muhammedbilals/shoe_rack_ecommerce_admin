@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
 
-
 class TextFieldSignUp extends StatelessWidget {
   final IconData icon;
   final String title;
   final IconData? trailing;
-   bool? isNumberPad = false;
+  bool? isNumberPad = false;
 
-   TextFieldSignUp(
-      {super.key, required this.icon, required this.title, this.trailing,this.isNumberPad});
+  TextFieldSignUp(
+      {super.key,
+      required this.icon,
+      required this.title,
+      this.trailing,
+      this.isNumberPad});
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +36,10 @@ class TextFieldSignUp extends StatelessWidget {
           ),
           SizedBox(
             height: 40,
-            width: 280,
+            width: 250,
             child: Center(
               child: TextField(
-                
-                keyboardType:isNumberPad ==true? TextInputType.number:null,
+                keyboardType: isNumberPad == true ? TextInputType.number : null,
                 cursorColor: colorgreen,
                 // cursorHeight: 20,
                 decoration: InputDecoration.collapsed(

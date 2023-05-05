@@ -52,7 +52,7 @@ class ProductsPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: size.width * 0.53,
+                            width: size.width * 0.47,
                             child: Row(
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -71,7 +71,7 @@ class ProductsPage extends StatelessWidget {
                             ),
                           ),
                           SizedBox(
-                            width: 200,
+                            width: 150,
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 12.0, bottom: 8, top: 5),
