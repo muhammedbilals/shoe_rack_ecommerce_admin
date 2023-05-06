@@ -4,23 +4,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
 import 'package:shoe_rack_ecommerce_admin/model/product.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/MainButton.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/productsTextfield.dart';
 
 class EditProduct extends StatelessWidget {
-  EditProduct({super.key, required this.id,  this.product});
-  final String id;
+  EditProduct({super.key, this.product, required this.data});
+
   Product? product;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
-    final titlecontroller = TextEditingController();
-    final subtitlecontroller = TextEditingController();
-    final pricecontroller = TextEditingController();
-    final sizecontroller = TextEditingController();
-    final colorcontroller = TextEditingController();
-    final discriptioncontroller = TextEditingController();
+    final Size size = MediaQuery.of(context).size;
+
+    final titlecontroller = TextEditingController(text: data['name']);
+    final subtitlecontroller = TextEditingController(text: data['subtitle']);
+    final pricecontroller = TextEditingController(text: data['price']);
+    final sizecontroller = TextEditingController(text: data['size']);
+    final colorcontroller = TextEditingController(text: data['color']);
+    final descriptioncontroller =
+        TextEditingController(text: data['discription']);
 
     // Product product = Product(
     //     name: titlecontroller.text.trim(),
@@ -29,25 +34,25 @@ class EditProduct extends StatelessWidget {
     //     size: int.parse(sizecontroller.text),
     //     descrption: discriptioncontroller.text);
 
-    Future<void> updateProduct(
-      String id,
-    ) async {
-      CollectionReference product =
-          FirebaseFirestore.instance.collection('product');
-      final documentReference = product.doc(id);
+    Future<void> updateProduct() async {
+      final products = FirebaseFirestore.instance.collection('product');
+      final productRef = products.doc(data['id']);
       try {
-        documentReference.update({
+        await productRef.update({
+          // 'id':productRef.id,
           'name': titlecontroller.text,
           'subtitle': subtitlecontroller.text,
-          'discription': discriptioncontroller.text,
-          'id': id,
+          'price': pricecontroller.text,
+          'size': sizecontroller.text,
           'color': colorcontroller.text,
-          'size': sizecontroller.text
+          'description': descriptioncontroller.text
         });
-        print(id);
+        // print(id);
+        print(data['id']);
+        print('Product updated');
         // print();
       } on FirebaseException catch (e) {
-        print(e.message);
+        print('eroor message is :${e.message}');
       }
     }
 
@@ -89,7 +94,7 @@ class EditProduct extends StatelessWidget {
                   maintitle: 'color',
                 ),
                 ProductsTextField(
-                  controller: discriptioncontroller,
+                  controller: descriptioncontroller,
                   title:
                       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been theand typesetting industry Lorem Ipsum has been the  industrys standard dummy text ever',
                   maintitle: 'discription',
@@ -100,9 +105,39 @@ class EditProduct extends StatelessWidget {
               ],
             ),
           ),
-          CustomButton(
-            text: 'Update',
-            function: updateProduct(id),
+          Positioned(
+            bottom: 10,
+            left: 0,
+            right: 0,
+            child: SizedBox(
+              width: size.width * 0.9,
+              height: 60,
+              child: ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll<Color>(colorgreen),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  print(titlecontroller.text);
+                  print('id is -----------------------${data['id']}');
+                  // addProduct(product);
+                  updateProduct();
+                },
+                icon: Icon(
+                  Icons.add,
+                  size: 25,
+                  color: colorwhite,
+                ),
+                label: Text(
+                  'Update Product',
+                  style: TextStyle(fontSize: 22, color: colorwhite),
+                ),
+              ),
+            ),
           )
         ],
       ),

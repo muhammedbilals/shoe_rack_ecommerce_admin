@@ -1,11 +1,11 @@
 class Product {
-  String name;
-  String subtitle;
-  String descrption;
-  String? id;
-  String? price;
-  String? color;
-  int? size;
+  final String name;
+  final String subtitle;
+  final String descrption;
+   String? id;
+  final String? price;
+  final String? color;
+  final int? size;
 
   Product(
       {required this.name,

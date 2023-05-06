@@ -25,15 +25,15 @@ class AddProduct extends StatelessWidget {
     final colorcontroller = TextEditingController();
     final descriptioncontroller = TextEditingController();
 
-    Product products = Product(
-        name: titlecontroller.text,
-        subtitle: subtitlecontroller.text,
-        color: colorcontroller.text,
-        size:
-            sizecontroller.text.isEmpty ? null : int.parse(sizecontroller.text),
-        descrption: descriptioncontroller.text);
+    // Product products = Product(
+    //     name: titlecontroller.text,
+    //     subtitle: subtitlecontroller.text,
+    //     color: colorcontroller.text,
+    //     size:
+    //         sizecontroller.text.isEmpty ? null : int.parse(sizecontroller.text),
+    //     descrption: descriptioncontroller.text);
 
-    Future<void> addProduct(Product products) async {
+    Future<void> addProduct() async {
       final isValid = formKey.currentState!.validate();
       if (!isValid) return;
 
@@ -50,8 +50,7 @@ class AddProduct extends StatelessWidget {
         CollectionReference product =
             FirebaseFirestore.instance.collection('product');
             final productRef = product.doc();
-        product.add({
-     
+        productRef.set({
           'id':productRef.id,
           'name':     titlecontroller.text,
           'subtitle': subtitlecontroller.text,
@@ -70,7 +69,9 @@ class AddProduct extends StatelessWidget {
 
       return;
     }
-
+    Future<void> deleteProduct()async{
+      
+    }
 
 
     return Scaffold(
@@ -150,7 +151,7 @@ class AddProduct extends StatelessWidget {
                   onPressed: () {
                     print(titlecontroller.text);
                     // addProduct(product);
-                    addProduct(products);
+                    addProduct();
                  
                   },
                   icon: Icon(
