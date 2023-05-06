@@ -5,7 +5,10 @@ class FirebaseApi {
   static Future<String> createProduct(Product product) async {
     final docProduct = FirebaseFirestore.instance.collection('product').doc();
     product.id = docProduct.id;
-    await docProduct.set(product.toJason());
+    await docProduct.set(
+      
+      product.toJason(),SetOptions(merge: true));
+    print('created product:${product.name}-------------------------');
     return docProduct.id;
   }
 }

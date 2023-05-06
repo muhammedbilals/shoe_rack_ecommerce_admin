@@ -23,17 +23,17 @@ class AddProduct extends StatelessWidget {
     final pricecontroller = TextEditingController();
     final sizecontroller = TextEditingController();
     final colorcontroller = TextEditingController();
-    final discriptioncontroller = TextEditingController();
+    final descriptioncontroller = TextEditingController();
 
-    Product product = Product(
+    Product products = Product(
         name: titlecontroller.text,
         subtitle: subtitlecontroller.text,
         color: colorcontroller.text,
         size:
             sizecontroller.text.isEmpty ? null : int.parse(sizecontroller.text),
-        discrption: discriptioncontroller.text);
+        descrption: descriptioncontroller.text);
 
-    Future<void> addProduct(Product product) async {
+    Future<void> addProduct(Product products) async {
       final isValid = formKey.currentState!.validate();
       if (!isValid) return;
 
@@ -44,18 +44,34 @@ class AddProduct extends StatelessWidget {
       );
 
       try {
-        CollectionReference users =
-            FirebaseFirestore.instance.collection('product');
+        // CollectionReference users =
+        //     FirebaseFirestore.instance.collection('product');
         // await FirebaseApi.createProduct(product);
-        users.add(product).then((value) => print('user added'));
+        CollectionReference product =
+            FirebaseFirestore.instance.collection('product');
+            final productRef = product.doc();
+        product.add({
+     
+          'id':productRef.id,
+          'name':     titlecontroller.text,
+          'subtitle': subtitlecontroller.text,
+          'price':    pricecontroller.text,
+          'size':     sizecontroller.text,
+          'color':   colorcontroller.text,
+          'description':descriptioncontroller.text
+        }).then((value) => print('product added'));
+  //  Navigator.pop(context);
+        // users.add(product.toJason()).then((value) => print('user added'));
       } on FirebaseException catch (e) {
         print(e);
         utils.showSnackbar('${e.message}-------------------------------------');
       }
-      // navigatorKey.currentState!.popUntil((route) => route.isFirst);
+      navigatorKey.currentState!.pop((route) => route.isFirst);
 
       return;
     }
+
+
 
     return Scaffold(
       body: Stack(
@@ -97,7 +113,7 @@ class AddProduct extends StatelessWidget {
                     maintitle: 'color',
                   ),
                   ProductsTextField(
-                    controller: discriptioncontroller,
+                    controller: descriptioncontroller,
                     title:
                         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been theand typesetting industry Lorem Ipsum has been the  industrys standard dummy text ever',
                     maintitle: 'discription',
@@ -133,8 +149,9 @@ class AddProduct extends StatelessWidget {
                   ),
                   onPressed: () {
                     print(titlecontroller.text);
-                    addProduct(product);
-                    Navigator.pop(context);
+                    // addProduct(product);
+                    addProduct(products);
+                 
                   },
                   icon: Icon(
                     Icons.add,

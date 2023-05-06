@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -6,20 +9,48 @@ import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/MainBut
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/productsTextfield.dart';
 
 class EditProduct extends StatelessWidget {
-  const EditProduct({super.key});
+  EditProduct({super.key, required this.id,  this.product});
+  final String id;
+  Product? product;
 
   @override
   Widget build(BuildContext context) {
-          final titlecontroller = TextEditingController();
+    final titlecontroller = TextEditingController();
     final subtitlecontroller = TextEditingController();
-            final pricecontroller = TextEditingController();
+    final pricecontroller = TextEditingController();
     final sizecontroller = TextEditingController();
-            final colorcontroller = TextEditingController();
+    final colorcontroller = TextEditingController();
     final discriptioncontroller = TextEditingController();
 
-    Product product =Product(name: titlecontroller.text.trim(), subtitle: subtitlecontroller.text.trim(),color: colorcontroller.text,size: int.parse(sizecontroller.text),discrption: discriptioncontroller.text);
+    // Product product = Product(
+    //     name: titlecontroller.text.trim(),
+    //     subtitle: subtitlecontroller.text.trim(),
+    //     color: colorcontroller.text,
+    //     size: int.parse(sizecontroller.text),
+    //     descrption: discriptioncontroller.text);
 
-    
+    Future<void> updateProduct(
+      String id,
+    ) async {
+      CollectionReference product =
+          FirebaseFirestore.instance.collection('product');
+      final documentReference = product.doc(id);
+      try {
+        documentReference.update({
+          'name': titlecontroller.text,
+          'subtitle': subtitlecontroller.text,
+          'discription': discriptioncontroller.text,
+          'id': id,
+          'color': colorcontroller.text,
+          'size': sizecontroller.text
+        });
+        print(id);
+        // print();
+      } on FirebaseException catch (e) {
+        print(e.message);
+      }
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -32,8 +63,8 @@ class EditProduct extends StatelessWidget {
                   padding: const EdgeInsets.all(100.0),
                   child: const Icon(Icons.add),
                 ),
-                 ProductsTextField(
-                controller: titlecontroller,
+                ProductsTextField(
+                  controller: titlecontroller,
                   title: 'puma',
                   maintitle: 'Product name',
                 ),
@@ -69,7 +100,10 @@ class EditProduct extends StatelessWidget {
               ],
             ),
           ),
-          const CustomButton(text: 'Update')
+          CustomButton(
+            text: 'Update',
+            function: updateProduct(id),
+          )
         ],
       ),
     );
