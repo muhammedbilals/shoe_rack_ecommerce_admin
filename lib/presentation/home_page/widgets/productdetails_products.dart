@@ -72,9 +72,10 @@ class ProductsPage extends StatelessWidget {
                             height: 100,
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child: Container(
+                                child:data['imgurl']==""? Container(
                                   color: colorgreen,
-                                )),
+                                ):Image.network(data['imgurl'],fit: BoxFit.cover,)
+                                ),
                           ),
                         ),
                         Column(

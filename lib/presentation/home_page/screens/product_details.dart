@@ -25,6 +25,17 @@ class ProductsDetails extends StatelessWidget {
                   height: size.width,
                   width: size.width,
                   color: colorgreen,
+                  child: data['imgurl'] != ""
+                      ? Image.network(
+                          data['imgurl'],
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          height: size.width,
+                          width: size.width,
+                          color: colorgreen,
+                          child: Center(child: Text('no image were added')),
+                        ),
                 ),
                 detailsTile(maintitle: 'title', title: data['name']),
                 detailsTile(maintitle: 'subtitle', title: data['subtitle']),

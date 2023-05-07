@@ -12,7 +12,7 @@ Future<String> uploadImage(File file) async {
 
   // Upload the file to the specified path 
   firebase_storage.UploadTask task = ref.putFile(file);
-
+  
   // Listen for the upload progress
   task.snapshotEvents.listen((firebase_storage.TaskSnapshot snapshot) {
     print(

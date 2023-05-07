@@ -1,17 +1,11 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shoe_rack_ecommerce_admin/api/firebase_api.dart';
 import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
 import 'package:shoe_rack_ecommerce_admin/core/utils/utils.dart';
 import 'package:shoe_rack_ecommerce_admin/functions/functions.dart';
 import 'package:shoe_rack_ecommerce_admin/main.dart';
-import 'package:shoe_rack_ecommerce_admin/model/product.dart';
-import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/MainButton.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/productsTextfield.dart';
 
 class AddProduct extends StatelessWidget {
@@ -77,7 +71,7 @@ class AddProduct extends StatelessWidget {
         print(e);
         utils.showSnackbar('${e.message}-------------------------------------');
       }
-      navigatorKey.currentState!.pop((route) => route.isFirst);
+      navigatorKey.currentState!.popUntil((route) => route.isFirst);
 
       return;
     }
@@ -117,14 +111,15 @@ class AddProduct extends StatelessWidget {
                         valueListenable: imagePathNotifer,
                         builder: (BuildContext context, String imgpath,
                             Widget? child) {
-                          return imgpath == ""
+                       
+                        return  imgpath == ""
                               ? Padding(
                                   padding: EdgeInsets.all(100.0),
                                   child: Icon(Icons.add),
                                 )
                               : Image.network(
                                   imgpath,
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.cover,
                                 );
                         },
                       ),

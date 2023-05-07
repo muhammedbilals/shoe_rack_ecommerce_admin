@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
+import 'package:shoe_rack_ecommerce_admin/functions/functions.dart';
 import 'package:shoe_rack_ecommerce_admin/model/product.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/MainButton.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/productsTextfield.dart';
@@ -14,6 +17,7 @@ class EditProduct extends StatelessWidget {
 
   Product? product;
   final Map<String, dynamic> data;
+  final ValueNotifier<String> imagePathNotifer = ValueNotifier("");
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +38,13 @@ class EditProduct extends StatelessWidget {
     //     size: int.parse(sizecontroller.text),
     //     descrption: discriptioncontroller.text);
 
-    Future<void> updateProduct() async {
+    Future<void> updateProduct(String imgurl) async {
       final products = FirebaseFirestore.instance.collection('product');
       final productRef = products.doc(data['id']);
       try {
         await productRef.update({
           // 'id':productRef.id,
+          'imgurl': imgurl,
           'name': titlecontroller.text,
           'subtitle': subtitlecontroller.text,
           'price': pricecontroller.text,
@@ -64,9 +69,75 @@ class EditProduct extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(100.0),
-                  child: const Icon(Icons.add),
+                Container(
+                  color: Colors.amber,
+                  width: size.width,
+                  height: size.width,
+                  child: Stack(children: <Widget>[
+                    Positioned(
+                      height: 20,
+                      bottom: 100,
+                      left: size.width * 0.5,
+                      child: IconButton(
+                          onPressed: () async {
+                            final ImagePicker picker = ImagePicker();
+                            // final XFile? image =  await picker.pickImage(source: ImageSource.gallery);
+                            final pickedFile = await ImagePicker()
+                                .pickImage(source: ImageSource.gallery);
+
+                            if (pickedFile == null) {
+                              return;
+                            } else {
+                              File file = File(pickedFile.path);
+                              // imagePathNotifer.value = 'nullayi';
+                              imagePathNotifer.value = await uploadImage(file);
+                              print(
+                                  'image url is-----------  ${imagePathNotifer.value}');
+                            }
+                          },
+                          icon: Icon(Icons.camera)),
+                    ),
+                    Image.network(
+                      data['imgurl'],
+                      fit: BoxFit.cover,
+                    ),
+
+                    //   GestureDetector(
+
+                    //   onTap: () async {
+                    //     // final ImagePicker picker = ImagePicker();
+                    //     // final XFile? image =  await picker.pickImage(source: ImageSource.gallery);
+                    //     final pickedFile = await ImagePicker()
+                    //         .pickImage(source: ImageSource.gallery);
+
+                    //     if (pickedFile == null) {
+                    //       return;
+                    //     } else {
+                    //       File file = File(pickedFile.path);
+                    //       // imagePathNotifer.value = 'nullayi';
+                    //       imagePathNotifer.value = await uploadImage(file);
+                    //       print(
+                    //           'image url is-----------  ${imagePathNotifer.value}');
+                    //     }
+                    //   },
+                    //   child: ValueListenableBuilder(
+                    //     valueListenable: imagePathNotifer,
+                    //     builder: (BuildContext context, String imgpath,
+                    //         Widget? child) {
+
+                    //     return  imgpath == ""
+                    //           ? Padding(
+                    //               padding: EdgeInsets.all(100.0),
+                    //               child: Icon(Icons.add),
+                    //             )
+                    //           : Image.network(
+                    //               imgpath,
+                    //               fit: BoxFit.cover,
+                    //             );
+                    //     },
+                    //   ),
+                    // ),
+                  ]),
                 ),
                 ProductsTextField(
                   controller: titlecontroller,
@@ -112,30 +183,36 @@ class EditProduct extends StatelessWidget {
             child: SizedBox(
               width: size.width * 0.9,
               height: 60,
-              child: ElevatedButton.icon(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color>(colorgreen),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
+              child: ValueListenableBuilder(
+                valueListenable: imagePathNotifer,
+                builder: (BuildContext context, String imgpath, Widget? child) {
+                  return ElevatedButton.icon(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll<Color>(colorgreen),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                onPressed: () {
-                  print(titlecontroller.text);
-                  print('id is -----------------------${data['id']}');
-                  // addProduct(product);
-                  updateProduct();
+                    onPressed: () {
+                      print(titlecontroller.text);
+                      print('id is -----------------------${data['id']}');
+                      // addProduct(product);
+                      updateProduct(imgpath);
+                    },
+                    icon: Icon(
+                      Icons.add,
+                      size: 25,
+                      color: colorwhite,
+                    ),
+                    label: Text(
+                      'Update Product',
+                      style: TextStyle(fontSize: 22, color: colorwhite),
+                    ),
+                  );
                 },
-                icon: Icon(
-                  Icons.add,
-                  size: 25,
-                  color: colorwhite,
-                ),
-                label: Text(
-                  'Update Product',
-                  style: TextStyle(fontSize: 22, color: colorwhite),
-                ),
               ),
             ),
           )
