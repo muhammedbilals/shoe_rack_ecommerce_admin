@@ -6,15 +6,27 @@ import 'package:shoe_rack_ecommerce_admin/presentation/home_page/screens/product
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/MainButton.dart';
 
 class ProductsPage extends StatelessWidget {
-   ProductsPage({
+  ProductsPage({
     super.key,
   });
-      final Stream<QuerySnapshot> _usersStream =
-        FirebaseFirestore.instance.collection('product').snapshots();
+  final Stream<QuerySnapshot> _usersStream =
+      FirebaseFirestore.instance.collection('product').snapshots();
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    Future<void> deleteProduct(String id) async {
+      final products = FirebaseFirestore.instance.collection('products');
+      final productRef = products.doc(id);
+
+      try {
+        return productRef.delete().then((value) {
+          print("Product Deleted");
+        });
+      } on FirebaseException catch (e) {
+        print(e.message);
+      }
+    }
 
     return Stack(
       children: [
@@ -108,7 +120,37 @@ class ProductsPage extends StatelessWidget {
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
-                          onPressed: () {},
+                          onPressed: () {
+                            print(data['id']);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Delete confirmation'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this item?'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ).then((value) {
+                              deleteProduct(
+                                data['id'],
+                              );
+                            });
+                          },
                         ),
                       ],
                     ),

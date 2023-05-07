@@ -2,12 +2,13 @@ class Product {
   final String name;
   final String subtitle;
   final String descrption;
-   String? id;
+  String? id;
   final String? price;
   final String? color;
   final int? size;
+  final String imgurl;
 
-  Product(
+  Product(this.imgurl, 
       {required this.name,
       required this.subtitle,
       this.id,
@@ -16,13 +17,14 @@ class Product {
       this.size,
       this.descrption = ''});
 
-  static Product fromJason(Map<String, dynamic> json) => Product(
-      name: json['name'],
-      subtitle: json['subtitle'],
-      descrption: json['discrption'],
-      id: json['id'],
-      color: json['color'],
-      size: json['size']);
+  // static Product fromJason(Map<String, dynamic> json) => Product(
+  //     imgurl : json['imgUrl'],
+  //     name: json['name'],
+  //     subtitle: json['subtitle'],
+  //     descrption: json['discrption'],
+  //     id: json['id'],
+  //     color: json['color'],
+  //     size: json['size']);
 
   Map<String, dynamic> toJason() => {
         'name': name,
@@ -30,6 +32,7 @@ class Product {
         'discription': descrption,
         'id': id,
         'color': color,
-        'size': size
+        'size': size,
+        'imgurl':imgurl
       };
 }

@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoe_rack_ecommerce_admin/api/firebase_api.dart';
 import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
 import 'package:shoe_rack_ecommerce_admin/core/utils/utils.dart';
+import 'package:shoe_rack_ecommerce_admin/functions/functions.dart';
 import 'package:shoe_rack_ecommerce_admin/main.dart';
 import 'package:shoe_rack_ecommerce_admin/model/product.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/MainButton.dart';
@@ -13,6 +17,7 @@ import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/product
 class AddProduct extends StatelessWidget {
   AddProduct({super.key});
   final formKey = GlobalKey<FormState>();
+  final ValueNotifier<String> imagePathNotifer = ValueNotifier("");
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +37,14 @@ class AddProduct extends StatelessWidget {
     //     size:
     //         sizecontroller.text.isEmpty ? null : int.parse(sizecontroller.text),
     //     descrption: descriptioncontroller.text);
-
-    Future<void> addProduct() async {
+    ValueListenableBuilder(
+      valueListenable: imagePathNotifer,
+      builder: (BuildContext context, dynamic value, Widget? _) {
+        final imagepath;
+        return imagepath = value;
+      },
+    );
+    Future<void> addProduct(String imagepath) async {
       final isValid = formKey.currentState!.validate();
       if (!isValid) return;
 
@@ -49,17 +60,18 @@ class AddProduct extends StatelessWidget {
         // await FirebaseApi.createProduct(product);
         CollectionReference product =
             FirebaseFirestore.instance.collection('product');
-            final productRef = product.doc();
+        final productRef = product.doc();
         productRef.set({
-          'id':productRef.id,
-          'name':     titlecontroller.text,
+          'imgurl': imagepath,
+          'id': productRef.id,
+          'name': titlecontroller.text,
           'subtitle': subtitlecontroller.text,
-          'price':    pricecontroller.text,
-          'size':     sizecontroller.text,
-          'color':   colorcontroller.text,
-          'description':descriptioncontroller.text
+          'price': pricecontroller.text,
+          'size': sizecontroller.text,
+          'color': colorcontroller.text,
+          'description': descriptioncontroller.text
         }).then((value) => print('product added'));
-  //  Navigator.pop(context);
+        //  Navigator.pop(context);
         // users.add(product.toJason()).then((value) => print('user added'));
       } on FirebaseException catch (e) {
         print(e);
@@ -69,10 +81,6 @@ class AddProduct extends StatelessWidget {
 
       return;
     }
-    Future<void> deleteProduct()async{
-      
-    }
-
 
     return Scaffold(
       body: Stack(
@@ -84,9 +92,43 @@ class AddProduct extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(100.0),
-                    child: const Icon(Icons.add),
+                  Container(
+                    color: Colors.amber,
+                    width: size.width,
+                    height: size.width,
+                    child: GestureDetector(
+                      onTap: () async {
+                        // final ImagePicker picker = ImagePicker();
+                        // final XFile? image =  await picker.pickImage(source: ImageSource.gallery);
+                        final pickedFile = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
+
+                        if (pickedFile == null) {
+                          return;
+                        } else {
+                          File file = File(pickedFile.path);
+                          // imagePathNotifer.value = 'nullayi';
+                          imagePathNotifer.value = await uploadImage(file);
+                          print(
+                              'image url is-----------  ${imagePathNotifer.value}');
+                        }
+                      },
+                      child: ValueListenableBuilder(
+                        valueListenable: imagePathNotifer,
+                        builder: (BuildContext context, String imgpath,
+                            Widget? child) {
+                          return imgpath == ""
+                              ? Padding(
+                                  padding: EdgeInsets.all(100.0),
+                                  child: Icon(Icons.add),
+                                )
+                              : Image.network(
+                                  imgpath,
+                                  fit: BoxFit.contain,
+                                );
+                        },
+                      ),
+                    ),
                   ),
                   ProductsTextField(
                     controller: titlecontroller,
@@ -119,7 +161,7 @@ class AddProduct extends StatelessWidget {
                         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been theand typesetting industry Lorem Ipsum has been the  industrys standard dummy text ever',
                     maintitle: 'discription',
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 100,
                   )
                 ],
@@ -138,31 +180,38 @@ class AddProduct extends StatelessWidget {
               child: SizedBox(
                 width: size.width * 0.9,
                 height: 60,
-                child: ElevatedButton.icon(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll<Color>(colorgreen),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
+                child: ValueListenableBuilder(
+                  valueListenable: imagePathNotifer,
+                  builder:
+                      (BuildContext context, String imgpath, Widget? child) {
+                    return ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll<Color>(colorgreen),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  onPressed: () {
-                    print(titlecontroller.text);
-                    // addProduct(product);
-                    addProduct();
-                 
+                      onPressed: () {
+                        print(
+                            'recived imagepath in lisner -----------------$imgpath');
+                        // addProduct(product);
+                        addProduct(imgpath);
+                      },
+                      icon: Icon(
+                        Icons.add,
+                        size: 25,
+                        color: colorwhite,
+                      ),
+                      label: Text(
+                        'Add Product',
+                        style: TextStyle(fontSize: 22, color: colorwhite),
+                      ),
+                    );
                   },
-                  icon: Icon(
-                    Icons.add,
-                    size: 25,
-                    color: colorwhite,
-                  ),
-                  label: Text(
-                    'Add Product',
-                    style: TextStyle(fontSize: 22, color: colorwhite),
-                  ),
                 ),
               ),
             ),
