@@ -16,15 +16,15 @@ class ProductsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     Future<void> deleteProduct(String id) async {
-      final products = FirebaseFirestore.instance.collection('products');
+      final products = FirebaseFirestore.instance.collection('product');
       final productRef = products.doc(id);
 
       try {
         return productRef.delete().then((value) {
-          print("Product Deleted");
+          print(id);
         });
       } on FirebaseException catch (e) {
-        print(e.message);
+        print('${e.message}afdasdfasdfasdf');
       }
     }
 
@@ -57,7 +57,7 @@ class ProductsPage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
-                    width: size.width * 0.95,
+                    width: size.width * 0.98,
                     height: size.width * 0.30,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -68,14 +68,18 @@ class ProductsPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: SizedBox(
-                            width: 100,
-                            height: 100,
+                            width: 80,
+                            height: 80,
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child:data['imgurl']==""? Container(
-                                  color: colorgreen,
-                                ):Image.network(data['imgurl'],fit: BoxFit.cover,)
-                                ),
+                                child: data['imgurl'] == ""
+                                    ? Container(
+                                        color: colorgreen,
+                                      )
+                                    : Image.network(
+                                        data['imgurl'],
+                                        fit: BoxFit.cover,
+                                      )),
                           ),
                         ),
                         Column(
@@ -94,7 +98,9 @@ class ProductsPage extends StatelessWidget {
                                         left: 12.0, top: 10, bottom: 8),
                                     child: Text(
                                       data['name'],
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          overflow: TextOverflow.ellipsis),
                                       textAlign: TextAlign.start,
                                     ),
                                   ),
@@ -119,6 +125,7 @@ class ProductsPage extends StatelessWidget {
                             ),
                           ],
                         ),
+                        
                         IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
@@ -140,6 +147,9 @@ class ProductsPage extends StatelessWidget {
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop(true);
+                                        deleteProduct(
+                                          data['id'],
+                                        );
                                       },
                                       child: const Text('Delete'),
                                     ),

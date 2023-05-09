@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/screens/login_page.dart';
+import 'package:shoe_rack_ecommerce_admin/presentation/screens/sudopage.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: const SudoPage(),
     );
   }
 }

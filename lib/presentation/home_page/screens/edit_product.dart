@@ -1,15 +1,13 @@
 import 'dart:io';
-import 'dart:math';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
 import 'package:shoe_rack_ecommerce_admin/functions/functions.dart';
 import 'package:shoe_rack_ecommerce_admin/model/product.dart';
-import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/MainButton.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/productsTextfield.dart';
 
 class EditProduct extends StatelessWidget {

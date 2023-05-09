@@ -4,6 +4,8 @@ import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
 class TextFieldSignUp extends StatelessWidget {
   final IconData icon;
   final String title;
+  final TextEditingController? controller;
+
   final IconData? trailing;
   bool? isNumberPad = false;
 
@@ -12,7 +14,7 @@ class TextFieldSignUp extends StatelessWidget {
       required this.icon,
       required this.title,
       this.trailing,
-      this.isNumberPad});
+      this.isNumberPad, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class TextFieldSignUp extends StatelessWidget {
             width: 250,
             child: Center(
               child: TextField(
+                controller: controller,
                 keyboardType: isNumberPad == true ? TextInputType.number : null,
                 cursorColor: colorgreen,
                 // cursorHeight: 20,
