@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
@@ -12,6 +13,21 @@ class AddProduct extends StatelessWidget {
   AddProduct({super.key});
   final formKey = GlobalKey<FormState>();
   final ValueNotifier<String> imagePathNotifer = ValueNotifier("");
+  Future<List<String>> uploadFiles(List<File> _images) async {
+    var imageUrls =
+        await Future.wait(_images.map((_image) => uploadFile(_image)));
+    print(imageUrls);
+    return imageUrls;
+  }
+
+  Future<String> uploadFile(File _image) async {
+    Reference storageReference =
+        FirebaseStorage.instance.ref().child('posts/${_image.path}');
+    UploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask;
+
+    return await storageReference.getDownloadURL();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +127,7 @@ class AddProduct extends StatelessWidget {
                         valueListenable: imagePathNotifer,
                         builder: (BuildContext context, String imgpath,
                             Widget? child) {
-                       
-                        return  imgpath == ""
+                          return imgpath == ""
                               ? Padding(
                                   padding: EdgeInsets.all(100.0),
                                   child: Icon(Icons.add),
