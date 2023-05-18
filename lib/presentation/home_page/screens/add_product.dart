@@ -12,33 +12,43 @@ import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/product
 class AddProduct extends StatelessWidget {
   AddProduct({super.key});
   final formKey = GlobalKey<FormState>();
+  List<String> categoryList = <String>['Sneakers', 'Casual', 'Sports', 'Formal'];
+  List<String> sizeList = <String>['9', '10', '11', '12'];
+  List<String> nameList = <String>['Adidas', 'droorsclothing', 'Fila', 'Vans', 'Nike', 'Redtape', 'Under Armour'];
+  List<String> colorList = <String>['Black', 'Red', 'White', 'Blue'];
+
+
+
   final ValueNotifier<String> imagePathNotifer = ValueNotifier("");
-  Future<List<String>> uploadFiles(List<File> _images) async {
+  Future<List<String>> uploadFiles(List<File> images) async {
     var imageUrls =
-        await Future.wait(_images.map((_image) => uploadFile(_image)));
+        await Future.wait(images.map((image) => uploadFile(image)));
     print(imageUrls);
     return imageUrls;
   }
 
-  Future<String> uploadFile(File _image) async {
+  Future<String> uploadFile(File image) async {
     Reference storageReference =
-        FirebaseStorage.instance.ref().child('posts/${_image.path}');
-    UploadTask uploadTask = storageReference.putFile(_image);
+        FirebaseStorage.instance.ref().child('posts/${image.path}');
+    UploadTask uploadTask = storageReference.putFile(image);
     await uploadTask;
-
     return await storageReference.getDownloadURL();
   }
+
+  final titlecontroller = TextEditingController();
+  final subtitlecontroller = TextEditingController();
+  final pricecontroller = TextEditingController();
+  // final sizecontroller = TextEditingController();
+  final colorcontroller = TextEditingController();
+  final descriptioncontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-
-    final titlecontroller = TextEditingController();
-    final subtitlecontroller = TextEditingController();
-    final pricecontroller = TextEditingController();
-    final sizecontroller = TextEditingController();
-    final colorcontroller = TextEditingController();
-    final descriptioncontroller = TextEditingController();
+    String dropdownCategoryValue = categoryList.first;
+    String dropdownSizeValue = sizeList.first;
+    String dropdownNameValue = nameList.first;
+    String dropdownColorValue = colorList.first;
 
     // Product products = Product(
     //     name: titlecontroller.text,
@@ -55,6 +65,9 @@ class AddProduct extends StatelessWidget {
       },
     );
     Future<void> addProduct(String imagepath) async {
+      if (imagepath == '') {
+        return;
+      }
       final isValid = formKey.currentState!.validate();
       if (!isValid) return;
 
@@ -74,12 +87,13 @@ class AddProduct extends StatelessWidget {
         productRef.set({
           'imgurl': imagepath,
           'id': productRef.id,
-          'name': titlecontroller.text,
+          'name': dropdownNameValue,
           'subtitle': subtitlecontroller.text,
-          'price': pricecontroller.text,
-          'size': sizecontroller.text,
-          'color': colorcontroller.text,
-          'description': descriptioncontroller.text
+          'price': int.parse(pricecontroller.text),
+          'size': int.parse(dropdownSizeValue),
+          'color': dropdownColorValue,
+          'description': descriptioncontroller.text,
+          'category': dropdownCategoryValue,
         }).then((value) => print('product added'));
         //  Navigator.pop(context);
         // users.add(product.toJason()).then((value) => print('user added'));
@@ -99,7 +113,7 @@ class AddProduct extends StatelessWidget {
             child: Form(
               key: formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
@@ -128,7 +142,7 @@ class AddProduct extends StatelessWidget {
                         builder: (BuildContext context, String imgpath,
                             Widget? child) {
                           return imgpath == ""
-                              ? Padding(
+                              ? const Padding(
                                   padding: EdgeInsets.all(100.0),
                                   child: Icon(Icons.add),
                                 )
@@ -140,10 +154,49 @@ class AddProduct extends StatelessWidget {
                       ),
                     ),
                   ),
-                  ProductsTextField(
-                    controller: titlecontroller,
-                    title: 'puma',
-                    maintitle: 'Product name',
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          width: size.width * 0.9,
+                          height: size.width * 0.13,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: colorgreen),
+                              borderRadius: BorderRadius.circular(20),
+                              color: colorwhite),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: dropdownNameValue,
+                                icon: const Icon(Icons.arrow_downward_sharp),
+                                elevation: 8,
+                                style: const TextStyle(color: Colors.black),
+                                disabledHint: Container(
+                                  height: 2,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (String? value) {
+                                  // This is called when the user selects an item.
+                                  setState(() {
+                                    dropdownNameValue = value!;
+                                  });
+                                },
+                                items: nameList.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   ProductsTextField(
                     controller: subtitlecontroller,
@@ -151,25 +204,152 @@ class AddProduct extends StatelessWidget {
                     maintitle: 'Product subtitle',
                   ),
                   ProductsTextField(
+                    isNumberPad: true,
                     controller: pricecontroller,
                     title: '4500',
                     maintitle: 'price',
                   ),
-                  ProductsTextField(
-                    controller: sizecontroller,
-                    title: '10',
-                    maintitle: 'size',
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          width: size.width * 0.9,
+                          height: size.width * 0.13,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: colorgreen),
+                              borderRadius: BorderRadius.circular(20),
+                              color: colorwhite),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: dropdownSizeValue,
+                                icon: const Icon(Icons.arrow_downward_sharp),
+                                elevation: 8,
+                                style: const TextStyle(color: Colors.black),
+                                disabledHint: Container(
+                                  height: 2,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (String? value) {
+                                  // This is called when the user selects an item.
+                                  setState(() {
+                                    dropdownSizeValue = value!;
+                                  });
+                                },
+                                items: sizeList.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  ProductsTextField(
-                    controller: colorcontroller,
-                    title: 'black',
-                    maintitle: 'color',
+                   StatefulBuilder(
+                    builder: (context, setState) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          width: size.width * 0.9,
+                          height: size.width * 0.13,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: colorgreen),
+                              borderRadius: BorderRadius.circular(20),
+                              color: colorwhite),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: dropdownColorValue,
+                                icon: const Icon(Icons.arrow_downward_sharp),
+                                elevation: 8,
+                                style: const TextStyle(color: Colors.black),
+                                disabledHint: Container(
+                                  height: 2,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (String? value) {
+                                  // This is called when the user selects an item.
+                                  setState(() {
+                                    dropdownColorValue = value!;
+                                  });
+                                },
+                                items: colorList.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   ProductsTextField(
                     controller: descriptioncontroller,
                     title:
                         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been theand typesetting industry Lorem Ipsum has been the  industrys standard dummy text ever',
                     maintitle: 'discription',
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text('Category'),
+                  ),
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          width: size.width * 0.9,
+                          height: size.width * 0.13,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: colorgreen),
+                              borderRadius: BorderRadius.circular(20),
+                              color: colorwhite),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: dropdownCategoryValue,
+                                icon: const Icon(Icons.arrow_downward_sharp),
+                                elevation: 8,
+                                style: const TextStyle(color: Colors.black),
+                                disabledHint: Container(
+                                  height: 2,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (String? value) {
+                                  // This is called when the user selects an item.
+                                  setState(() {
+                                    dropdownCategoryValue = value!;
+                                  });
+                                },
+                                items: categoryList.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(
                     height: 100,
@@ -206,8 +386,6 @@ class AddProduct extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        print(
-                            'recived imagepath in lisner -----------------$imgpath');
                         // addProduct(product);
                         addProduct(imgpath);
                       },

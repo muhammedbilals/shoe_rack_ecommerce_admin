@@ -1,26 +1,27 @@
 import 'dart:io';
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:shoe_rack_ecommerce_admin/core/colors/colors.dart';
 import 'package:shoe_rack_ecommerce_admin/functions/functions.dart';
+import 'package:shoe_rack_ecommerce_admin/main.dart';
 import 'package:shoe_rack_ecommerce_admin/model/product.dart';
 import 'package:shoe_rack_ecommerce_admin/presentation/home_page/widgets/productsTextfield.dart';
 
 class EditProduct extends StatelessWidget {
   EditProduct({super.key, this.product, required this.data});
+  final formKey = GlobalKey<FormState>();
 
   Product? product;
   final Map<String, dynamic> data;
   final ValueNotifier<String> imagePathNotifer = ValueNotifier("");
+  
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-
     final titlecontroller = TextEditingController(text: data['name']);
     final subtitlecontroller = TextEditingController(text: data['subtitle']);
     final pricecontroller = TextEditingController(text: data['price']);
@@ -28,6 +29,7 @@ class EditProduct extends StatelessWidget {
     final colorcontroller = TextEditingController(text: data['color']);
     final descriptioncontroller =
         TextEditingController(text: data['discription']);
+
 
     // Product product = Product(
     //     name: titlecontroller.text.trim(),
@@ -37,6 +39,17 @@ class EditProduct extends StatelessWidget {
     //     descrption: discriptioncontroller.text);
 
     Future<void> updateProduct(String imgurl) async {
+      if (imgurl == '') {
+        return;
+      }
+      //      final isValid = formKey.currentState!.validate();
+      // if (!isValid) return;
+      //     showDialog(
+      //   context: context,
+      //   barrierDismissible: false,
+      //   builder: (context) => const Center(child: CircularProgressIndicator()),
+      // );
+
       final products = FirebaseFirestore.instance.collection('product');
       final productRef = products.doc(data['id']);
       try {
@@ -57,6 +70,7 @@ class EditProduct extends StatelessWidget {
       } on FirebaseException catch (e) {
         print('eroor message is :${e.message}');
       }
+      navigatorKey.currentState!.popUntil((route) => route.isFirst);
     }
 
     return Scaffold(
@@ -67,76 +81,36 @@ class EditProduct extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Stack(children: <Widget>[
+                 
+                ]),
                 Container(
-                  color: Colors.amber,
                   width: size.width,
                   height: size.width,
-                  child: Stack(children: <Widget>[
-                    Positioned(
-                      height: 20,
-                      bottom: 100,
-                      left: size.width * 0.5,
-                      child: IconButton(
-                          onPressed: () async {
-                            final ImagePicker picker = ImagePicker();
-                            // final XFile? image =  await picker.pickImage(source: ImageSource.gallery);
-                            final pickedFile = await ImagePicker()
-                                .pickImage(source: ImageSource.gallery);
-
-                            if (pickedFile == null) {
-                              return;
-                            } else {
-                              File file = File(pickedFile.path);
-                              // imagePathNotifer.value = 'nullayi';
-                              imagePathNotifer.value = await uploadImage(file);
-                              print(
-                                  'image url is-----------  ${imagePathNotifer.value}');
-                            }
-                          },
-                          icon: Icon(Icons.camera)),
-                    ),
-                    Image.network(
+                  child: ClipRRect(
+                    child: Image.network(
                       data['imgurl'],
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     ),
-
-                    //   GestureDetector(
-
-                    //   onTap: () async {
-                    //     // final ImagePicker picker = ImagePicker();
-                    //     // final XFile? image =  await picker.pickImage(source: ImageSource.gallery);
-                    //     final pickedFile = await ImagePicker()
-                    //         .pickImage(source: ImageSource.gallery);
-
-                    //     if (pickedFile == null) {
-                    //       return;
-                    //     } else {
-                    //       File file = File(pickedFile.path);
-                    //       // imagePathNotifer.value = 'nullayi';
-                    //       imagePathNotifer.value = await uploadImage(file);
-                    //       print(
-                    //           'image url is-----------  ${imagePathNotifer.value}');
-                    //     }
-                    //   },
-                    //   child: ValueListenableBuilder(
-                    //     valueListenable: imagePathNotifer,
-                    //     builder: (BuildContext context, String imgpath,
-                    //         Widget? child) {
-
-                    //     return  imgpath == ""
-                    //           ? Padding(
-                    //               padding: EdgeInsets.all(100.0),
-                    //               child: Icon(Icons.add),
-                    //             )
-                    //           : Image.network(
-                    //               imgpath,
-                    //               fit: BoxFit.cover,
-                    //             );
-                    //     },
-                    //   ),
-                    // ),
-                  ]),
+                  ),
                 ),
+                IconButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      // final XFile? image =  await picker.pickImage(source: ImageSource.gallery);
+                      final pickedFile = await ImagePicker()
+                          .pickImage(source: ImageSource.gallery);
+                      if (pickedFile == null) {
+                        return;
+                      } else {
+                        File file = File(pickedFile.path);
+
+                        imagePathNotifer.value = await uploadImage(file);
+                        print(
+                            'image url is-----------  ${imagePathNotifer.value}');
+                      }
+                    },
+                    icon: Icon(Icons.camera)),
                 ProductsTextField(
                   controller: titlecontroller,
                   title: 'puma',
