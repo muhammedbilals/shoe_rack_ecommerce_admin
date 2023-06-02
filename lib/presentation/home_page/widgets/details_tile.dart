@@ -35,7 +35,7 @@ class detailsTile extends StatelessWidget {
               padding: EdgeInsets.all(12.0),
               child: Text(
                 title,
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 17),
                 textAlign: TextAlign.start,
               ),
             ),

@@ -44,6 +44,7 @@ class AddProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final Size size = MediaQuery.of(context).size;
     String dropdownCategoryValue = categoryList.first;
     String dropdownSizeValue = sizeList.first;
@@ -71,7 +72,7 @@ class AddProduct extends StatelessWidget {
       final isValid = formKey.currentState!.validate();
       if (!isValid) return;
 
-      showDialog(
+        showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(child: CircularProgressIndicator()),
@@ -190,7 +191,7 @@ class AddProduct extends StatelessWidget {
                                     value: value,
                                     child: Text(value),
                                   );
-                                }).toList(),
+                                },).toList(),
                               ),
                             ),
                           ),

@@ -7,6 +7,7 @@ import 'package:shoe_rack_ecommerce_admin/presentation/home_page/screens/order_d
 // }
 class OrdersTile extends StatelessWidget {
   const OrdersTile({
+    required this.orderId,
     super.key,
     required this.order,
     this.height,
@@ -14,6 +15,7 @@ class OrdersTile extends StatelessWidget {
   });
 
   final String order;
+  final String orderId;
   final double? height;
   final String orderstatus;
 
@@ -25,43 +27,34 @@ class OrdersTile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OrderDetails(),
-                ));
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              color: colorgray,
-              width: size.width,
-              height: height != null ? height : 70,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text(
-                        order,
-                        style: TextStyle(fontSize: 20),
-                        textAlign: TextAlign.start,
-                      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            color: colorgray,
+            width: size.width,
+            height: height ?? 70,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(
+                      order,
+                      style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.start,
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text(
-                        orderstatus,
-                        style: TextStyle(fontSize: 20),
-                        textAlign: TextAlign.start,
-                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(
+                      orderstatus,
+                      style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.start,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

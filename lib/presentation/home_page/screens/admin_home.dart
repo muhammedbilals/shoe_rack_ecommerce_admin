@@ -20,13 +20,13 @@ class AdminHome extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: const Icon(
-                     Icons.back_hand_rounded,
-                          size: 30,
-                        ),
-                        onPressed: () {},
-                      ),
+                      //   IconButton(
+                      //     icon: const Icon(
+                      //  Icons.back_hand_rounded,
+                      //       size: 30,
+                      //     ),
+                      //     onPressed: () {},
+                      //   ),
                       const Spacer(),
                       const Center(
                         child: Text(
@@ -35,13 +35,13 @@ class AdminHome extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.search,
-                          size: 20,
-                        ),
-                        onPressed: () {},
-                      ),
+                      // IconButton(
+                      //   icon: const Icon(
+                      //     Icons.search,
+                      //     size: 20,
+                      //   ),
+                      //   onPressed: () {},
+                      // ),
                     ],
                   ),
                 ),
@@ -56,10 +56,10 @@ class AdminHome extends StatelessWidget {
               ],
             ),
           ),
-          body:  TabBarView(
+          body: TabBarView(
               // physics: NeverScrollableScrollPhysics(),
-              physics: BouncingScrollPhysics(),
-              children: [ProductsPage(), OrdersPage()]),
+              physics: const BouncingScrollPhysics(),
+              children: [ProductsPage(), const OrdersPage()]),
         ),
       ),
     );
